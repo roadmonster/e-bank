@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class UserUpdateRequest {
-    private String username;
+    private String name;
     private String pwd;
     private String email;
     private Long id;

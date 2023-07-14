@@ -24,9 +24,10 @@ public class UserServiceImpl implements UserService{
     @Override
     public User updateUser(UserUpdateRequest request) {
         Long userId = request.getId();
+        System.out.println("request username :" + request.getName());
         return userRepository.findById(userId)
                 .map(existingUser -> {
-                    existingUser.setName(request.getUsername());
+                    existingUser.setName(request.getName());
                     existingUser.setEmail(request.getEmail());
                     existingUser.setPwd(passwordEncoder.encode(request.getPwd()));
                     return userRepository.save(existingUser);
