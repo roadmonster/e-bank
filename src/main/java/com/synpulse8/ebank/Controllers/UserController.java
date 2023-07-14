@@ -1,5 +1,6 @@
 package com.synpulse8.ebank.Controllers;
 
+import com.synpulse8.ebank.DTO.SignupRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;
 import com.synpulse8.ebank.Models.User;
 import com.synpulse8.ebank.Services.UserService;
@@ -21,6 +22,11 @@ public class UserController {
     @GetMapping("/{userId}")
     public User getUser(@PathVariable Long userId) {
         return userService.getUser(userId);
+    }
+
+    @PostMapping
+    public User createUser(@RequestBody SignupRequest request) {
+        return userService.createUser(request);
     }
 
 

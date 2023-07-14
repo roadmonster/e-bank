@@ -1,5 +1,6 @@
 package com.synpulse8.ebank.Services;
 
+import com.synpulse8.ebank.DTO.SignupRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;
 import com.synpulse8.ebank.Exceptions.UserNotFoundException;
 import com.synpulse8.ebank.Models.User;
@@ -31,5 +32,15 @@ public class UserServiceImpl implements UserService{
                     return userRepository.save(existingUser);
                 })
                 .orElseThrow(()->new UserNotFoundException("No matching user with given userId in our data"));
+    }
+
+    @Override
+    public User createUser(SignupRequest request) {
+        User user = User.builder()
+                .name(request.getUsername())
+                .pwd(passwordEncoder.encode(request.getPwd()))
+                .email(request.getEmail())
+                .build();
+        return userRepository.save(user);
     }
 }
