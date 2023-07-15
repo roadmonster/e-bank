@@ -2,10 +2,14 @@ package com.synpulse8.ebank.Controllers;
 
 import com.synpulse8.ebank.DTO.SignupRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;
+import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.User;
+import com.synpulse8.ebank.Services.AccountService;
 import com.synpulse8.ebank.Services.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserService userService;
+    private final AccountService accountService;
 
     @PutMapping
     public User updateUser(@RequestBody UserUpdateRequest request) {
@@ -28,6 +33,14 @@ public class UserController {
     public User createUser(@RequestBody SignupRequest request) {
         return userService.createUser(request);
     }
+
+    @GetMapping("/{userId}/accounts")
+    public List<Account> getAllAccountsForUser(@PathVariable Long userId){
+        return accountService.getAccountForUser(userId);
+    }
+
+
+
 
 
 }

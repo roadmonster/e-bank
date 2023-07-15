@@ -24,9 +24,6 @@ public class Account {
     private BigDecimal credit_amt;
     private BigDecimal debit_amt;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
-    private List<Transaction> transactions;
-
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

@@ -15,7 +15,11 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -41,7 +45,7 @@ public class TransactionImpl implements TransactionService{
                 .currency(request.getCurrency())
                 .transaction_type(request.getTransactionType())
                 .money_type(request.getMoneyType())
-                .transaction_time(request.getTimestamp())
+                .transaction_time(request.getTransactionTime())
                 .sender_id(request.getSenderId())
                 .receiver_id(request.getReceiverId())
                 .account(senderAcc)
@@ -57,7 +61,7 @@ public class TransactionImpl implements TransactionService{
                 .currency(request.getCurrency())
                 .transaction_type(request.getTransactionType())
                 .money_type(request.getMoneyType())
-                .transaction_time(request.getTimestamp())
+                .transaction_time(request.getTransactionTime())
                 .sender_id(request.getSenderId())
                 .receiver_id(request.getReceiverId())
                 .account(receiverAcc)
@@ -97,6 +101,18 @@ public class TransactionImpl implements TransactionService{
         return transactionRepository.findById(id).orElseThrow(
                 () -> new BankTransactionNotFoundException("Give transaction id not exisit")
         );
+    }
+
+    @Override
+    public List<Transaction> getTransactionByDate(int year, int month, int day) {
+        LocalDate localDate = LocalDate.of(year, month, day);
+        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        return transactionRepository.findTransactionByDate(date);
+    }
+
+    @Override
+    public List<Transaction> getAllTransactions() {
+        return transactionRepository.findAll();
     }
 
 

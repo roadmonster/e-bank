@@ -3,14 +3,12 @@ package com.synpulse8.ebank.Models;
 import com.synpulse8.ebank.Enums.Currency;
 import com.synpulse8.ebank.Enums.MoneyType;
 import com.synpulse8.ebank.Enums.TransactionType;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.Date;
 
 @Data
 @Builder
@@ -33,5 +31,20 @@ public class Transaction {
     private TransactionType transaction_type;
     private Long sender_id;
     private Long receiver_id;
+
+    @Getter(AccessLevel.NONE)
+    @Setter(AccessLevel.NONE)
+    @Transient
+    private Date transactionDate;
+
+    public Date getTransactionDate() {
+        return transaction_time != null ? new Date(transaction_time.getTime()) : null;
+    }
+
+    public void setTransactionDate(Date transactionDate) {
+        this.transactionDate = transactionDate;
+    }
+
+
 }
 

@@ -12,4 +12,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class AccountRequest {
     private Currency currency;
+    private Long userId;
 }

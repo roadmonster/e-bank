@@ -19,6 +19,6 @@ public class SendReceiveTransactionRequest {
     private BigDecimal amount;
     private MoneyType moneyType;
     private TransactionType transactionType;
-    private Timestamp timestamp;
+    private Timestamp transactionTime;
     private Currency currency;
 }
