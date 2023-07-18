@@ -1,6 +1,7 @@
 package com.synpulse8.ebank.Services;
 
 import com.synpulse8.ebank.DTO.AccountCreationDTO;
+import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
 import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Repository.AccountRepository;
@@ -8,7 +9,9 @@ import lombok.AllArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 @Service
@@ -57,5 +60,14 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public void updateAccountCreationStatus(AccountCreationDTO accountCreationDTO) {
         accountData.put(accountCreationDTO.getIban(), accountCreationDTO);
+    }
+
+    @Override
+    public void updateBalance(BalanceUpdateDTO dto) {
+        Account acc = accountRepository.findById(dto.getAccount_id())
+                .orElseThrow(() -> new BankAccountNonExistException("Account non existent"));
+        BigDecimal newBalance = acc.getDebit_amt().add(dto.getAmount());
+        acc.setDebit_amt(newBalance);
+        accountRepository.save(acc);
     }
 }

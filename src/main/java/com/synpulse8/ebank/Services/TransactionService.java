@@ -1,5 +1,6 @@
 package com.synpulse8.ebank.Services;
 
+import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
 import com.synpulse8.ebank.DTO.TransactionDTO;
 import com.synpulse8.ebank.Models.Transaction;
 
@@ -14,5 +15,6 @@ public interface TransactionService {
     List<Transaction> getAllTransactions();
     void deposit(TransactionDTO transactionDto);
     void updateTransactionStatus(UUID uuid, TransactionDTO dto);
+    void publishBalanceUpdate(BalanceUpdateDTO dto);
     TransactionDTO getTransactionStatus(UUID transaction_id);
 }

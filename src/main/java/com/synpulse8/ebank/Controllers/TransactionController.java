@@ -80,13 +80,13 @@ public class TransactionController {
     public ResponseEntity<String> deposit(@RequestBody TransactionDTO transactionDto) {
         transactionDto.setTransaction_id(UUIDGenerator.generateUUID());
         transactionDto.setTransaction_time(Timestamper.stamp());
-        System.out.println("test print the dto for deposit " + transactionDto.toString());
         transactionService.deposit(transactionDto);
         return ResponseEntity.accepted().body("Transaction Accepted. TransactionId: " + transactionDto.getTransaction_id());
     }
 
     @PostMapping("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TransactionDTO transactionDto) {
+        transactionDto.setAmount(transactionDto.getAmount().negate());
         transactionService.deposit(transactionDto);
         return ResponseEntity.accepted().body("Transaction Accepted");
     }

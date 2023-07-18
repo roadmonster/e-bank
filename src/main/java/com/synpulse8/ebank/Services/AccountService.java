@@ -1,6 +1,7 @@
 package com.synpulse8.ebank.Services;
 
 import com.synpulse8.ebank.DTO.AccountCreationDTO;
+import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
 import com.synpulse8.ebank.Models.Account;
 
 import java.util.List;
@@ -12,4 +13,5 @@ public interface AccountService {
     AccountCreationDTO getCreationStatus(String iban);
     Account getAccountByIban(String iban);
     void updateAccountCreationStatus(AccountCreationDTO accountCreationDTO);
+    void updateBalance(BalanceUpdateDTO balanceUpdateDTO);
 }
