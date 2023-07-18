@@ -3,17 +3,18 @@ package com.synpulse8.ebank.Controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synpulse8.ebank.DTO.*;
-import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
 import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Services.TransactionService;
 import com.synpulse8.ebank.Utilities.Timestamper;
+import com.synpulse8.ebank.Utilities.UUIDGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/transaction")
@@ -49,7 +50,7 @@ public class TransactionController {
 //    }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getTransactionById (@PathVariable Long id){
+    public ResponseEntity<String> getTransactionById (@PathVariable UUID id){
         try {
             Transaction t = transactionService.getTransactionById(id);
             return new ResponseEntity<>(objectMapper.writeValueAsString(t),
@@ -76,36 +77,37 @@ public class TransactionController {
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<String> deposit(@RequestBody PersonalTransactionDTO transactionDto) {
+    public ResponseEntity<String> deposit(@RequestBody TransactionDTO transactionDto) {
+        transactionDto.setTransaction_id(UUIDGenerator.generateUUID());
+        transactionDto.setTransaction_time(Timestamper.stamp());
+        System.out.println("test print the dto for deposit " + transactionDto.toString());
         transactionService.deposit(transactionDto);
-        return ResponseEntity.accepted().body("Transaction Accepted");
+        return ResponseEntity.accepted().body("Transaction Accepted. TransactionId: " + transactionDto.getTransaction_id());
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody PersonalTransactionDTO transactionDto) {
+    public ResponseEntity<String> withdraw(@RequestBody TransactionDTO transactionDto) {
         transactionService.deposit(transactionDto);
         return ResponseEntity.accepted().body("Transaction Accepted");
     }
 
     @PostMapping("/send-receive")
-    public ResponseEntity<String> sendMondy(@RequestBody SendReceiveTransactionDto request)
+    public ResponseEntity<String> sendMoney(@RequestBody SendReceiveTransactionDto request)
             throws CloneNotSupportedException {
-        PersonalTransactionDTO sendDto = PersonalTransactionDTO.builder()
+        TransactionDTO sendDto = TransactionDTO.builder()
                 .amount(request.getAmount().negate())
                 .currency(request.getCurrency())
                 .transaction_time(Timestamper.stamp())
                 .iban(request.getFrom_iban())
+                .transaction_id(UUIDGenerator.generateUUID())
                 .status("Pending")
                 .build();
 
         transactionService.deposit(sendDto);
-
-        PersonalTransactionDTO receiveDto = (PersonalTransactionDTO) sendDto.clone();
+        TransactionDTO receiveDto = (TransactionDTO) sendDto.clone();
         receiveDto.setAmount(request.getAmount());
         receiveDto.setIban(request.getTo_iban());
         transactionService.deposit(receiveDto);
-
-
         return ResponseEntity.accepted().body("transaction processing");
 
     }

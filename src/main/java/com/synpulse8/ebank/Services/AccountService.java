@@ -10,4 +10,6 @@ public interface AccountService {
     List<Account> getAccountForUser(Long userId);
     void accountCreation(AccountCreationDTO request);
     AccountCreationDTO getCreationStatus(String iban);
+    Account getAccountByIban(String iban);
+    void updateAccountCreationStatus(AccountCreationDTO accountCreationDTO);
 }

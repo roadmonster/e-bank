@@ -5,6 +5,7 @@ import com.synpulse8.ebank.Exceptions.UserNotFoundException;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Repository.AccountRepository;
 import com.synpulse8.ebank.Repository.UserRepository;
+import com.synpulse8.ebank.Services.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -12,17 +13,15 @@ import java.math.BigDecimal;
 
 @Component
 @AllArgsConstructor
-public class AccountCreationListener {
+public class AccountConsumer {
 
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
+    private final AccountService accountService;
 
     @KafkaListener(topics = "account_creation", groupId = "account-group",
             containerFactory = "accountKafkaListenerContainerFactory")
     public void handleAccountCreatedEvent(AccountCreationDTO accountCreationDTO) {
-
-        System.out.println("Here is my iban " + accountCreationDTO.getIban());
-
         // Process the account created event
         Account acc = Account.builder()
                 .iban(accountCreationDTO.getIban())
@@ -35,6 +34,7 @@ public class AccountCreationListener {
                 .build();
         accountRepository.save(acc);
         accountCreationDTO.setStatus("Processed");
+        accountService.updateAccountCreationStatus(accountCreationDTO);
 
     }
 }

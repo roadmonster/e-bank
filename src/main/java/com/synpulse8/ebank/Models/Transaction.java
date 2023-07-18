@@ -1,14 +1,13 @@
 package com.synpulse8.ebank.Models;
 
 import com.synpulse8.ebank.Enums.Currency;
-import com.synpulse8.ebank.Enums.MoneyType;
-import com.synpulse8.ebank.Enums.TransactionType;
 import lombok.*;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.UUID;
 
 @Data
 @Builder
@@ -18,19 +17,16 @@ import java.util.Date;
 @Table(name="Transaction")
 public class Transaction {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
     private Timestamp transaction_time;
+    private Long userid;
 
     @ManyToOne
     @JoinColumn(name = "account_id")
     private Account account;
     private Currency currency;
     private BigDecimal amount;
-    private MoneyType money_type;
-    private TransactionType transaction_type;
-    private String sender_iban;
-    private String receiver_iban;
+//    private TransactionType transaction_type;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
@@ -44,7 +40,5 @@ public class Transaction {
     public void setTransactionDate(Date transactionDate) {
         this.transactionDate = transactionDate;
     }
-
-
 }
 

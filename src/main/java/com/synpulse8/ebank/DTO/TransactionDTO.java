@@ -11,15 +11,17 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class PersonalTransactionDTO implements Cloneable{
-    private Long transaction_id;
+public class TransactionDTO implements Cloneable{
+    private UUID transaction_id;
     private String iban;
+    private Long userId;
     @JsonSerialize(using = CurrencySerializer.class)
     private Currency currency;
     private BigDecimal amount;
@@ -28,7 +30,7 @@ public class PersonalTransactionDTO implements Cloneable{
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        PersonalTransactionDTO clonedObject = (PersonalTransactionDTO) super.clone();
+        TransactionDTO clonedObject = (TransactionDTO) super.clone();
         return clonedObject;
     }
 }

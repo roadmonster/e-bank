@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synpulse8.ebank.DTO.AccountCreationDTO;
 import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
-import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Services.AccountService;
 import com.synpulse8.ebank.Utilities.IBANGenerator;
 import lombok.AllArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +20,6 @@ public class AccountController {
 
     @PostMapping
     public ResponseEntity<String> createAccount(@RequestBody AccountCreationDTO accountCreationDTO) {
-        System.out.println("I am in the controller and here is the account dto " + accountCreationDTO.toString());
         String iban = IBANGenerator.generate(accountCreationDTO.getCode());
         accountCreationDTO.setIban(iban);
         accountService.accountCreation(accountCreationDTO);
@@ -30,7 +27,7 @@ public class AccountController {
     }
 
     @GetMapping("/status")
-    public ResponseEntity<String> getAccountById(@RequestParam String iban) {
+    public ResponseEntity<String> getAccountStatus(@RequestParam String iban) {
         AccountCreationDTO dto = accountService.getCreationStatus(iban);
         if (dto == null) {
             return ResponseEntity.badRequest().body("iban non existent");
@@ -39,9 +36,15 @@ public class AccountController {
 
     }
 
-    private String getAccountJson(Account acc) throws JsonProcessingException {
-        String accountJson = objectMapper.writeValueAsString(acc);
-        return accountJson;
+    @GetMapping
+    public ResponseEntity<String> getAccountByIban(@RequestParam String iban) {
+        try {
+            return ResponseEntity.ok().body(objectMapper.writeValueAsString(accountService.getAccountByIban(iban)));
+        } catch (BankAccountNonExistException e) {
+            return ResponseEntity.badRequest().body("Invalid iban");
+        } catch (JsonProcessingException e) {
+            return ResponseEntity.internalServerError().build();
+        }
     }
 
 }
