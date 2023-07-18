@@ -20,17 +20,18 @@ import java.util.UUID;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class TransactionDTO implements Cloneable{
     private UUID transaction_id;
-    private String iban;
+    private Timestamp transaction_time;
     private Long userId;
+
+    private Long account_id;
     @JsonSerialize(using = CurrencySerializer.class)
     private Currency currency;
     private BigDecimal amount;
-    private Timestamp transaction_time;
+
     private String status;
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        TransactionDTO clonedObject = (TransactionDTO) super.clone();
-        return clonedObject;
+        return super.clone();
     }
 }

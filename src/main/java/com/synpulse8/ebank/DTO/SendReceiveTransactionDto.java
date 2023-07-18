@@ -17,8 +17,8 @@ import java.sql.Timestamp;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class SendReceiveTransactionDto {
     private Long transaction_id;
-    private String from_iban;
-    private String to_iban;
+    private Long from_account;
+    private Long to_account;
     @JsonSerialize(using = CurrencySerializer.class)
     private Currency currency;
     private BigDecimal amount;

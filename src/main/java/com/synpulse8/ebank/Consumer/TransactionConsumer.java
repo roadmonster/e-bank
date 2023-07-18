@@ -23,19 +23,17 @@ public class TransactionConsumer {
             containerFactory = "transactionKafkaListenerContainerFactory")
     public void handleTransactionEvent(TransactionDTO dto) {
         Transaction t = Transaction.builder()
-                .id(dto.getTransaction_id())
+                .transaction_id(dto.getTransaction_id().toString())
                 .transaction_time(dto.getTransaction_time())
                 .amount(dto.getAmount())
-                .account(accountRepository.findAccountByIban(dto.getIban()).orElseThrow(
+                .account(accountRepository.findById(dto.getAccount_id()).orElseThrow(
                         () -> new BankAccountNonExistException("no matching result in bank account database")
                 ))
                 .userid(dto.getUserId())
                 .currency(dto.getCurrency())
                 .build();
 
-        System.out.println("before " + t.toString());
         transactionRepository.save(t);
-        System.out.println("after");
         dto.setStatus("Posted");
         transactionService.updateTransactionStatus(dto.getTransaction_id(), dto);
 

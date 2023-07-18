@@ -17,7 +17,9 @@ import java.util.UUID;
 @Table(name="Transaction")
 public class Transaction {
     @Id
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    private String transaction_id;
     private Timestamp transaction_time;
     private Long userid;
 

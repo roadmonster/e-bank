@@ -98,7 +98,7 @@ public class TransactionController {
                 .amount(request.getAmount().negate())
                 .currency(request.getCurrency())
                 .transaction_time(Timestamper.stamp())
-                .iban(request.getFrom_iban())
+                .account_id(request.getFrom_account())
                 .transaction_id(UUIDGenerator.generateUUID())
                 .status("Pending")
                 .build();
@@ -106,7 +106,7 @@ public class TransactionController {
         transactionService.deposit(sendDto);
         TransactionDTO receiveDto = (TransactionDTO) sendDto.clone();
         receiveDto.setAmount(request.getAmount());
-        receiveDto.setIban(request.getTo_iban());
+        receiveDto.setAccount_id(request.getTo_account());
         transactionService.deposit(receiveDto);
         return ResponseEntity.accepted().body("transaction processing");
 
