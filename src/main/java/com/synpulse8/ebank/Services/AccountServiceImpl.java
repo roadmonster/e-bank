@@ -1,38 +1,28 @@
 package com.synpulse8.ebank.Services;
 
-import com.synpulse8.ebank.DTO.AccountRequest;
+import com.synpulse8.ebank.DTO.AccountCreationDTO;
 import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
 import com.synpulse8.ebank.Exceptions.UserNotFoundException;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.User;
 import com.synpulse8.ebank.Repository.AccountRepository;
 import com.synpulse8.ebank.Repository.UserRepository;
+import com.synpulse8.ebank.Utilities.IBANGenerator;
 import lombok.AllArgsConstructor;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.List;
-
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 @Service
 @AllArgsConstructor
 public class AccountServiceImpl implements AccountService{
 
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
-
-    @Override
-    public Account createAccount(AccountRequest request) {
-        User user = userRepository.findById(request.getUserId()).orElseThrow(
-                () -> new UserNotFoundException("Not matching result for given userId")
-        );
-        Account acc = Account.builder()
-                .currency(request.getCurrency())
-                .credit_amt(BigDecimal.valueOf(1))
-                .debit_amt(BigDecimal.valueOf(0))
-                .user(user)
-                .build();
-        return accountRepository.save(acc);
-    }
+    private final KafkaTemplate<String, AccountCreationDTO> kafkaTemplate;
+    private final ConcurrentMap<String, AccountCreationDTO> accountData = new ConcurrentHashMap<>();
 
     @Override
     public Account getAccountById(Long id) {
@@ -43,5 +33,26 @@ public class AccountServiceImpl implements AccountService{
     @Override
     public List<Account> getAccountForUser(Long userId) {
         return accountRepository.findAllAccountsByUserId(userId);
+    }
+
+    @Override
+    public void accountCreation(AccountCreationDTO accountCreationDTO) {
+
+        // Set initial status for the transaction
+        accountCreationDTO.setStatus("Processing");
+
+
+        // Store the transaction details in the transactionData map
+        accountData.put(accountCreationDTO.getIban(), accountCreationDTO);
+
+        // Publish the transaction event to a Kafka topic
+        kafkaTemplate.send("account_creation", accountCreationDTO.getIban(),accountCreationDTO);
+
+        System.out.println("I am here in the acc serv");
+    }
+
+    @Override
+    public AccountCreationDTO getCreationStatus(String iban) {
+        return this.accountData.get(iban);
     }
 }

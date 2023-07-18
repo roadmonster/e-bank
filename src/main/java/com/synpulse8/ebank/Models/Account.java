@@ -23,7 +23,7 @@ public class Account {
     private Currency currency;
     private BigDecimal credit_amt;
     private BigDecimal debit_amt;
-
+    private String iban;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;

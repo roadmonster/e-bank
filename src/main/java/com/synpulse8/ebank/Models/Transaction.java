@@ -29,8 +29,8 @@ public class Transaction {
     private BigDecimal amount;
     private MoneyType money_type;
     private TransactionType transaction_type;
-    private Long sender_id;
-    private Long receiver_id;
+    private String sender_iban;
+    private String receiver_iban;
 
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
