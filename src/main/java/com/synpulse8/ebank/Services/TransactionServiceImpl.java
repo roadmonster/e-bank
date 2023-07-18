@@ -1,13 +1,7 @@
 package com.synpulse8.ebank.Services;
 
-import com.synpulse8.ebank.DTO.PersonalTransactionRequest;
-import com.synpulse8.ebank.DTO.SendReceiveTransactionRequest;
 import com.synpulse8.ebank.DTO.PersonalTransactionDTO;
-import com.synpulse8.ebank.DTO.TransactionResponse;
-import com.synpulse8.ebank.Enums.TransactionType;
-import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
 import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
-import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.Balance;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Repository.AccountRepository;
@@ -15,7 +9,6 @@ import com.synpulse8.ebank.Repository.TransactionRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -31,10 +24,10 @@ public class TransactionServiceImpl implements TransactionService{
     private final AccountRepository accountRepository;
     private Map<Long, Balance> accountBalanceCache = new HashMap<>();
 
-    @Override
-    public boolean verifyTransaction(SendReceiveTransactionRequest request) {
-        return false;
-    }
+//    @Override
+//    public boolean verifyTransaction(SendReceiveTransactionRequest request) {
+//        return false;
+//    }
 
 //    @Override
 //    public TransactionResponse createSendReceiveTransaction(SendReceiveTransactionRequest request) {

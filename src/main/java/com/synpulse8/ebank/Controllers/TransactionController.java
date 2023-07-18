@@ -87,7 +87,7 @@ public class TransactionController {
         return ResponseEntity.accepted().body("Transaction Accepted");
     }
 
-    @PostMapping("/send")
+    @PostMapping("/send-receive")
     public ResponseEntity<String> sendMondy(@RequestBody SendReceiveTransactionDto request)
             throws CloneNotSupportedException {
         PersonalTransactionDTO sendDto = PersonalTransactionDTO.builder()
@@ -109,8 +109,4 @@ public class TransactionController {
         return ResponseEntity.accepted().body("transaction processing");
 
     }
-
-
-
-
 }
