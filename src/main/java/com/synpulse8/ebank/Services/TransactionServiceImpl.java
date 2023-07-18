@@ -60,6 +60,7 @@ public class TransactionServiceImpl implements TransactionService{
 
         // Publish the transaction event to a Kafka topic
         transactionKafkaTemplate.send("transaction", transactionDto.getTransaction_id(),transactionDto);
+
         BalanceUpdateDTO balanceUpdateDTO = BalanceUpdateDTO.builder()
                 .account_id(transactionDto.getAccount_id())
                 .amount(transactionDto.getAmount())

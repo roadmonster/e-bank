@@ -86,7 +86,10 @@ public class TransactionController {
 
     @PostMapping("/withdraw")
     public ResponseEntity<String> withdraw(@RequestBody TransactionDTO transactionDto) {
+        transactionDto.setTransaction_id(UUIDGenerator.generateUUID());
         transactionDto.setAmount(transactionDto.getAmount().negate());
+        transactionDto.setTransaction_time(Timestamper.stamp());
+
         transactionService.deposit(transactionDto);
         return ResponseEntity.accepted().body("Transaction Accepted");
     }
