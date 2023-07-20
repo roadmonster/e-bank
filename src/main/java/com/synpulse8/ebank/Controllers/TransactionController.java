@@ -41,15 +41,15 @@ public class TransactionController {
         }
     }
 
-    @GetMapping("/{year}/{month}/{day}")
-    public ResponseEntity<String> getTransactionForCertainDay(@PathVariable int year,
-                                                              @PathVariable int month,
-                                                              @PathVariable int day) throws JsonProcessingException {
+    @GetMapping("/date")
+    public ResponseEntity<String> getTransactionForCertainDay(@RequestParam int year,
+                                                              @RequestParam int month,
+                                                              @RequestParam int day) throws JsonProcessingException {
         List<Transaction> transactions = transactionService.getTransactionByDate(year, month, day);
         return new ResponseEntity<>(objectMapper.writeValueAsString(transactions), HttpStatus.OK);
     }
 
-    @GetMapping
+    @GetMapping("/between-date")
     public ResponseEntity<String> getTransactionBetweenDate(@RequestParam int fYear,
                                                             @RequestParam int fMonth,
                                                             @RequestParam int fDay,
@@ -62,10 +62,15 @@ public class TransactionController {
                 transactionService.getTransactionBetween(fromDate,toDate)));
     }
 
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<String> getAllTransactions() throws JsonProcessingException {
         List<Transaction> allTransactions = transactionService.getAllTransactions();
         return new ResponseEntity<>(objectMapper.writeValueAsString(allTransactions), HttpStatus.OK);
+    }
+
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<String> getTransactionsByUserId(@PathVariable Long userId) throws JsonProcessingException {
+        return ResponseEntity.ok(objectMapper.writeValueAsString(transactionService.getAllTransactionByUser(userId)));
     }
 
     @PostMapping("/deposit")
