@@ -7,7 +7,6 @@ import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.Date;
-import java.util.UUID;
 
 @Data
 @Builder

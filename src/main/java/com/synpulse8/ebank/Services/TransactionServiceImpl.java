@@ -2,6 +2,7 @@ package com.synpulse8.ebank.Services;
 
 import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
 import com.synpulse8.ebank.DTO.TransactionDTO;
+import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Repository.AccountRepository;
@@ -28,8 +29,10 @@ public class TransactionServiceImpl implements TransactionService{
     private final ConcurrentMap<UUID, TransactionDTO> transactionData = new ConcurrentHashMap<>();
 
     @Override
-    public Transaction getTransactionById(UUID id) {
-        return transactionRepository.findTransactionById(id);
+    public Transaction getTransactionById(Long id) {
+        return transactionRepository.findById(id).orElseThrow(
+                () -> new BankTransactionNotFoundException("not matching recode for given transaction id")
+        );
     }
 
     @Override
@@ -39,9 +42,15 @@ public class TransactionServiceImpl implements TransactionService{
 
     @Override
     public List<Transaction> getTransactionByDate(int year, int month, int day) {
+        // create a locate date and convert to date object
         LocalDate localDate = LocalDate.of(year, month, day);
+
+        // using the server's timezone could be a bit risky since the server
+        // could be in different timezone, for the purpose of self contained app
+        // we use server's timezone. In production will need front end to form this date
+        // object and send it back.
         Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return transactionRepository.findTransactionByDate(date);
+        return transactionRepository.findByTransactionTimeBetween(date, date);
     }
 
     @Override
@@ -81,6 +90,11 @@ public class TransactionServiceImpl implements TransactionService{
 
     public TransactionDTO getTransactionStatus(UUID transaction_id) {
         return this.transactionData.get(transaction_id);
+    }
+
+    @Override
+    public List<Transaction> getTransactionBetween(Date fromDate, Date toDate) {
+        return transactionRepository.findByTransactionTimeBetween(fromDate, toDate);
     }
 
 

@@ -6,5 +6,5 @@ import java.util.Date;
 import java.util.List;
 
 public interface CustomTransactionRepository {
-    List<Transaction> findTransactionByDate(Date date);
+    List<Transaction> findByTransactionTimeBetween(Date startDate, Date endDate);
 }

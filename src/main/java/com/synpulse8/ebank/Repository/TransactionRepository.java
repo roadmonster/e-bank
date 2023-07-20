@@ -10,7 +10,6 @@ import java.util.UUID;
 
 @Repository
 public interface TransactionRepository extends JpaRepository<Transaction, Long>, CustomTransactionRepository {
-    List<Transaction> findTransactionByDate(Date date);
-    Transaction findTransactionById(UUID id);
+    List<Transaction> findByTransactionTimeBetween(Date d1, Date d2);
     List<Transaction> findAllByUserid(Long userId);
 }
