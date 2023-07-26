@@ -2,9 +2,9 @@ package com.synpulse8.ebank.Controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.synpulse8.ebank.DTO.AccountCreationDTO;
+import com.synpulse8.ebank.DTO.AccountCreation;
 import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
-import com.synpulse8.ebank.Services.AccountService;
+import com.synpulse8.ebank.Services.Account.AccountService;
 import com.synpulse8.ebank.Utilities.IBANGenerator;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -19,16 +19,16 @@ public class AccountController {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @PostMapping
-    public ResponseEntity<String> createAccount(@RequestBody AccountCreationDTO accountCreationDTO) {
-        String iban = IBANGenerator.generate(accountCreationDTO.getCode());
-        accountCreationDTO.setIban(iban);
-        accountService.accountCreation(accountCreationDTO);
+    public ResponseEntity<String> createAccount(@RequestBody AccountCreation accountCreation) {
+        String iban = IBANGenerator.generate(accountCreation.getCode());
+        accountCreation.setIban(iban);
+        accountService.accountCreation(accountCreation);
         return ResponseEntity.accepted().body("Account creation accepted and here is your account number: " + iban);
     }
 
     @GetMapping("/status")
     public ResponseEntity<String> getAccountStatus(@RequestParam String iban) {
-        AccountCreationDTO dto = accountService.getCreationStatus(iban);
+        AccountCreation dto = accountService.getCreationStatus(iban);
         if (dto == null) {
             return ResponseEntity.badRequest().body("iban non existent");
         }

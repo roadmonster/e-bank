@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Configuration;
 
-import com.synpulse8.ebank.DTO.AccountCreationDTO;
+import com.synpulse8.ebank.DTO.AccountCreation;
 import com.synpulse8.ebank.Utilities.ConsumerConfigPropGenerator;
 import com.synpulse8.ebank.Utilities.ProducerConfigPropGenerator;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -26,31 +26,31 @@ public class AccountKafkaConfig {
     // Create the KafkaTemplate bean
 
     @Bean
-    public KafkaTemplate<String, AccountCreationDTO> accountKafkaTemplate() {
+    public KafkaTemplate<String, AccountCreation> accountKafkaTemplate() {
         return new KafkaTemplate<>(accountProducerFactory());
     }
 
     // Create the ProducerFactory bean
     @Bean
-    public ProducerFactory<String, AccountCreationDTO> accountProducerFactory() {
+    public ProducerFactory<String, AccountCreation> accountProducerFactory() {
         return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, AccountCreationDTO> accountKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, AccountCreationDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, AccountCreation> accountKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, AccountCreation> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(accountConsumerFactory());
         return factory;
     }
 
     // Create the ConsumerFactory bean
     @Bean
-    public ConsumerFactory<String, AccountCreationDTO> accountConsumerFactory() {
+    public ConsumerFactory<String, AccountCreation> accountConsumerFactory() {
 
 
         return new DefaultKafkaConsumerFactory<>(ConsumerConfigPropGenerator.getConsumerConfigProps(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(AccountCreationDTO.class, false));
+                new JsonDeserializer<>(AccountCreation.class, false));
     }
 
 }

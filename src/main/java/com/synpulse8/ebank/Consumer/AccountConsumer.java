@@ -1,11 +1,11 @@
 package com.synpulse8.ebank.Consumer;
 
-import com.synpulse8.ebank.DTO.AccountCreationDTO;
+import com.synpulse8.ebank.DTO.AccountCreation;
 import com.synpulse8.ebank.Exceptions.UserNotFoundException;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Repository.AccountRepository;
 import com.synpulse8.ebank.Repository.UserRepository;
-import com.synpulse8.ebank.Services.AccountService;
+import com.synpulse8.ebank.Services.Account.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
@@ -21,20 +21,20 @@ public class AccountConsumer {
 
     @KafkaListener(topics = "account_creation", groupId = "account-group",
             containerFactory = "accountKafkaListenerContainerFactory")
-    public void handleAccountCreatedEvent(AccountCreationDTO accountCreationDTO) {
+    public void handleAccountCreatedEvent(AccountCreation accountCreation) {
         // Process the account created event
         Account acc = Account.builder()
-                .iban(accountCreationDTO.getIban())
-                .currency(accountCreationDTO.getCurrency())
+                .iban(accountCreation.getIban())
+                .currency(accountCreation.getCurrency())
                 .credit_amt(BigDecimal.ONE)
                 .debit_amt(BigDecimal.ZERO)
-                .user(userRepository.findById(accountCreationDTO.getUserId()).orElseThrow(
+                .user(userRepository.findById(accountCreation.getUserId()).orElseThrow(
                         () -> new UserNotFoundException("Given userId not exist")
                 ))
                 .build();
         accountRepository.save(acc);
-        accountCreationDTO.setStatus("Processed");
-        accountService.updateAccountCreationStatus(accountCreationDTO);
+        accountCreation.setStatus("Processed");
+        accountService.updateAccountCreationStatus(accountCreation);
 
     }
 }

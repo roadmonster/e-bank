@@ -6,7 +6,7 @@ import com.synpulse8.ebank.DTO.*;
 import com.synpulse8.ebank.Enums.MoneyDirection;
 import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
 import com.synpulse8.ebank.Models.Transaction;
-import com.synpulse8.ebank.Services.TransactionService;
+import com.synpulse8.ebank.Services.Transaction.TransactionService;
 import com.synpulse8.ebank.Utilities.DateBuilder;
 import com.synpulse8.ebank.Utilities.Timestamper;
 import com.synpulse8.ebank.Utilities.UUIDGenerator;
@@ -15,8 +15,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
-import java.time.ZoneId;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -75,27 +73,27 @@ public class TransactionController {
     }
 
     @PostMapping("/deposit")
-    public ResponseEntity<String> deposit(@RequestBody TransactionDTO transactionDto) {
-        transactionDto.setTransaction_id(UUIDGenerator.generateUUID());
-        transactionDto.setTransaction_time(Timestamper.stamp());
-        transactionService.deposit(transactionDto);
-        return ResponseEntity.accepted().body("Transaction Accepted. TransactionId: " + transactionDto.getTransaction_id());
+    public ResponseEntity<String> deposit(@RequestBody DepositWithdrawRequest depositWithdrawRequest) {
+        depositWithdrawRequest.setTransaction_id(UUIDGenerator.generateUUID());
+        depositWithdrawRequest.setTransaction_time(Timestamper.stamp());
+        transactionService.deposit(depositWithdrawRequest);
+        return ResponseEntity.accepted().body("Transaction Accepted. TransactionId: " + depositWithdrawRequest.getTransaction_id());
     }
 
     @PostMapping("/withdraw")
-    public ResponseEntity<String> withdraw(@RequestBody TransactionDTO transactionDto) {
-        transactionDto.setTransaction_id(UUIDGenerator.generateUUID());
-        transactionDto.setAmount(transactionDto.getAmount().negate());
-        transactionDto.setTransaction_time(Timestamper.stamp());
+    public ResponseEntity<String> withdraw(@RequestBody DepositWithdrawRequest depositWithdrawRequest) {
+        depositWithdrawRequest.setTransaction_id(UUIDGenerator.generateUUID());
+        depositWithdrawRequest.setAmount(depositWithdrawRequest.getAmount().negate());
+        depositWithdrawRequest.setTransaction_time(Timestamper.stamp());
 
-        transactionService.deposit(transactionDto);
-        return ResponseEntity.accepted().body("Transaction Accepted" + transactionDto.getTransaction_id());
+        transactionService.deposit(depositWithdrawRequest);
+        return ResponseEntity.accepted().body("Transaction Accepted" + depositWithdrawRequest.getTransaction_id());
     }
 
     @PostMapping("/send-receive")
-    public ResponseEntity<String> sendMoney(@RequestBody SendReceiveTransactionDto request)
+    public ResponseEntity<String> sendMoney(@RequestBody SendReceiveRequest request)
             throws CloneNotSupportedException {
-        TransactionDTO sendDto = TransactionDTO.builder()
+        DepositWithdrawRequest sendDto = DepositWithdrawRequest.builder()
                 .amount(request.getAmount().negate())
                 .currency(request.getCurrency())
                 .transaction_time(Timestamper.stamp())
@@ -107,7 +105,7 @@ public class TransactionController {
         UUID transaction_id_to_return = sendDto.getTransaction_id();
         transactionService.deposit(sendDto);
 
-        TransactionDTO receiveDto = (TransactionDTO) sendDto.clone();
+        DepositWithdrawRequest receiveDto = (DepositWithdrawRequest) sendDto.clone();
         receiveDto.setAmount(request.getAmount());
         receiveDto.setAccount_id(request.getTo_account());
         receiveDto.setUserId(request.getReceiver_id());

@@ -1,7 +1,7 @@
-package com.synpulse8.ebank.Services;
+package com.synpulse8.ebank.Services.Account;
 
-import com.synpulse8.ebank.DTO.AccountCreationDTO;
-import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
+import com.synpulse8.ebank.DTO.AccountCreation;
+import com.synpulse8.ebank.DTO.BalanceUpdateRequest;
 import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Repository.AccountRepository;
@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 @Service
@@ -19,8 +18,8 @@ import java.util.concurrent.ConcurrentMap;
 public class AccountServiceImpl implements AccountService{
 
     private final AccountRepository accountRepository;
-    private final KafkaTemplate<String, AccountCreationDTO> accountKafkaTemplate;
-    private final ConcurrentMap<String, AccountCreationDTO> accountData = new ConcurrentHashMap<>();
+    private final KafkaTemplate<String, AccountCreation> accountKafkaTemplate;
+    private final ConcurrentMap<String, AccountCreation> accountData = new ConcurrentHashMap<>();
 
     @Override
     public Account getAccountById(Long id) {
@@ -34,19 +33,19 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public void accountCreation(AccountCreationDTO accountCreationDTO) {
+    public void accountCreation(AccountCreation accountCreation) {
         // Set initial status for the transaction
-        accountCreationDTO.setStatus("Processing");
+        accountCreation.setStatus("Processing");
 
         // Store the transaction details in the transactionData map
-        accountData.put(accountCreationDTO.getIban(), accountCreationDTO);
+        accountData.put(accountCreation.getIban(), accountCreation);
 
         // Publish the transaction event to a Kafka topic
-        accountKafkaTemplate.send("account_creation", accountCreationDTO.getIban(),accountCreationDTO);
+        accountKafkaTemplate.send("account_creation", accountCreation.getIban(), accountCreation);
     }
 
     @Override
-    public AccountCreationDTO getCreationStatus(String iban) {
+    public AccountCreation getCreationStatus(String iban) {
         return this.accountData.get(iban);
     }
 
@@ -58,12 +57,12 @@ public class AccountServiceImpl implements AccountService{
     }
 
     @Override
-    public void updateAccountCreationStatus(AccountCreationDTO accountCreationDTO) {
-        accountData.put(accountCreationDTO.getIban(), accountCreationDTO);
+    public void updateAccountCreationStatus(AccountCreation accountCreation) {
+        accountData.put(accountCreation.getIban(), accountCreation);
     }
 
     @Override
-    public void updateBalance(BalanceUpdateDTO dto) {
+    public void updateBalance(BalanceUpdateRequest dto) {
         Account acc = accountRepository.findById(dto.getAccount_id())
                 .orElseThrow(() -> new BankAccountNonExistException("Account non existent"));
         BigDecimal newBalance = acc.getDebit_amt().add(dto.getAmount());

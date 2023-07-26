@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Configuration;
 
-import com.synpulse8.ebank.DTO.TransactionDTO;
+import com.synpulse8.ebank.DTO.DepositWithdrawRequest;
 import com.synpulse8.ebank.Utilities.ConsumerConfigPropGenerator;
 import com.synpulse8.ebank.Utilities.ProducerConfigPropGenerator;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -23,28 +23,28 @@ public class TransactionKafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<UUID, TransactionDTO> transactionKafkaTemplate() {
+    public KafkaTemplate<UUID, DepositWithdrawRequest> transactionKafkaTemplate() {
         return new KafkaTemplate<>(transactionProducerFactory());
     }
 
     @Bean
-    public ProducerFactory<UUID, TransactionDTO> transactionProducerFactory() {
+    public ProducerFactory<UUID, DepositWithdrawRequest> transactionProducerFactory() {
         return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, TransactionDTO> transactionKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, TransactionDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, DepositWithdrawRequest> transactionKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, DepositWithdrawRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(transactionConsumerFactory());
         return factory;
     }
 
     // Create the ConsumerFactory bean
     @Bean
-    public ConsumerFactory<String, TransactionDTO> transactionConsumerFactory() {
+    public ConsumerFactory<String, DepositWithdrawRequest> transactionConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(ConsumerConfigPropGenerator.getConsumerConfigProps(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(TransactionDTO.class, false));
+                new JsonDeserializer<>(DepositWithdrawRequest.class, false));
     }
 
 

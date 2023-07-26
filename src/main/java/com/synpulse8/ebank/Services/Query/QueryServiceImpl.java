@@ -1,6 +1,6 @@
-package com.synpulse8.ebank.Services;
+package com.synpulse8.ebank.Services.Query;
 
-import com.synpulse8.ebank.DTO.QueryRequestDTO;
+import com.synpulse8.ebank.DTO.QueryRequest;
 import com.synpulse8.ebank.DTO.QueryResponse;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Utilities.KafkaResponseProcessor;
@@ -18,7 +18,7 @@ import java.util.concurrent.CompletableFuture;
 public class QueryServiceImpl implements QueryService{
 
     private final KafkaResponseProcessor responseProcessor;
-    private final KafkaTemplate<String, QueryRequestDTO> queryRequestDTOKafkaTemplate;
+    private final KafkaTemplate<String, QueryRequest> queryRequestDTOKafkaTemplate;
 
     @Override
     public List<Transaction> queryTransactions(Date from, Date to, Long userId) {
@@ -28,7 +28,7 @@ public class QueryServiceImpl implements QueryService{
         CompletableFuture<QueryResponse> completableFuture = responseProcessor.initiateRequest(requestId);
 
         // build the query request dto
-        QueryRequestDTO dto = QueryRequestDTO.builder()
+        QueryRequest dto = QueryRequest.builder()
                 .from(from).to(to).userId(userId).build();
 
         // Publish the query transaction request to the Kafka request channel

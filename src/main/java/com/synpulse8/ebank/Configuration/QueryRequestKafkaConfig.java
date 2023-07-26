@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Configuration;
 
-import com.synpulse8.ebank.DTO.QueryRequestDTO;
+import com.synpulse8.ebank.DTO.QueryRequest;
 import com.synpulse8.ebank.Utilities.ConsumerConfigPropGenerator;
 import com.synpulse8.ebank.Utilities.ProducerConfigPropGenerator;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -24,28 +24,28 @@ public class QueryRequestKafkaConfig {
 
     // Create the KafkaTemplate bean
     @Bean
-    public KafkaTemplate<String, QueryRequestDTO> queryKafkaTemplate() {
+    public KafkaTemplate<String, QueryRequest> queryKafkaTemplate() {
         return new KafkaTemplate<>(queryProducerFactory());
     }
 
     // Create the ProducerFactory bean
     @Bean
-    public ProducerFactory<String, QueryRequestDTO> queryProducerFactory() {
+    public ProducerFactory<String, QueryRequest> queryProducerFactory() {
         return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<String, QueryRequestDTO> queryRequestKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<String, QueryRequestDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<String, QueryRequest> queryRequestKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String, QueryRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(queryRequestConsumerFactory());
         return factory;
     }
 
     // Create the ConsumerFactory bean
     @Bean
-    public ConsumerFactory<String, QueryRequestDTO> queryRequestConsumerFactory() {
+    public ConsumerFactory<String, QueryRequest> queryRequestConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(ConsumerConfigPropGenerator.getConsumerConfigProps(),
                 new StringDeserializer(),
-                new JsonDeserializer<>(QueryRequestDTO.class, false));
+                new JsonDeserializer<>(QueryRequest.class, false));
     }
 }

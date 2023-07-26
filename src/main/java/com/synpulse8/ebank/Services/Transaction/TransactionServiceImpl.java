@@ -1,7 +1,7 @@
-package com.synpulse8.ebank.Services;
+package com.synpulse8.ebank.Services.Transaction;
 
-import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
-import com.synpulse8.ebank.DTO.TransactionDTO;
+import com.synpulse8.ebank.DTO.BalanceUpdateRequest;
+import com.synpulse8.ebank.DTO.DepositWithdrawRequest;
 import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Repository.TransactionRepository;
@@ -20,9 +20,9 @@ import java.util.concurrent.ConcurrentMap;
 public class TransactionServiceImpl implements TransactionService{
 
     private final TransactionRepository transactionRepository;
-    private final KafkaTemplate<UUID, TransactionDTO> transactionKafkaTemplate;
-    private final KafkaTemplate<UUID, BalanceUpdateDTO> accBalanceKafkaTemplate;
-    private final ConcurrentMap<UUID, TransactionDTO> transactionData = new ConcurrentHashMap<>();
+    private final KafkaTemplate<UUID, DepositWithdrawRequest> transactionKafkaTemplate;
+    private final KafkaTemplate<UUID, BalanceUpdateRequest> accBalanceKafkaTemplate;
+    private final ConcurrentMap<UUID, DepositWithdrawRequest> transactionData = new ConcurrentHashMap<>();
 
     @Override
     public Transaction getTransactionById(Long id) {
@@ -62,23 +62,23 @@ public class TransactionServiceImpl implements TransactionService{
      * then publish the message to transaction channel and the balance update channel
      */
     @Override
-    public void deposit(TransactionDTO transactionDto) {
+    public void deposit(DepositWithdrawRequest depositWithdrawRequest) {
 
         // Set initial status for the transaction
-        transactionDto.setStatus("Pending");
+        depositWithdrawRequest.setStatus("Pending");
 
         // Store the transaction details in the transactionData map
-        transactionData.put(transactionDto.getTransaction_id(), transactionDto);
+        transactionData.put(depositWithdrawRequest.getTransaction_id(), depositWithdrawRequest);
 
         // Publish the transaction event to a Kafka topic
-        transactionKafkaTemplate.send("transaction", transactionDto.getTransaction_id(),transactionDto);
+        transactionKafkaTemplate.send("transaction", depositWithdrawRequest.getTransaction_id(), depositWithdrawRequest);
 
-        BalanceUpdateDTO balanceUpdateDTO = BalanceUpdateDTO.builder()
-                .account_id(transactionDto.getAccount_id())
-                .amount(transactionDto.getAmount())
+        BalanceUpdateRequest balanceUpdateRequest = BalanceUpdateRequest.builder()
+                .account_id(depositWithdrawRequest.getAccount_id())
+                .amount(depositWithdrawRequest.getAmount())
                 .uuid(UUIDGenerator.generateUUID())
                 .build();
-        publishBalanceUpdate(balanceUpdateDTO);
+        publishBalanceUpdate(balanceUpdateRequest);
     }
 
     /**
@@ -88,7 +88,7 @@ public class TransactionServiceImpl implements TransactionService{
      * @param dto the data holding the status of the transaction from the consumer
      */
     @Override
-    public void updateTransactionStatus(UUID uuid, TransactionDTO dto) {
+    public void updateTransactionStatus(UUID uuid, DepositWithdrawRequest dto) {
         transactionData.put(uuid, dto);
     }
 
@@ -97,12 +97,12 @@ public class TransactionServiceImpl implements TransactionService{
      * @param dto object holding the balance update details
      */
     @Override
-    public void publishBalanceUpdate(BalanceUpdateDTO dto) {
+    public void publishBalanceUpdate(BalanceUpdateRequest dto) {
         accBalanceKafkaTemplate.send("account_balance", dto);
     }
 
 
-    public TransactionDTO getTransactionStatus(UUID transaction_id) {
+    public DepositWithdrawRequest getTransactionStatus(UUID transaction_id) {
         return this.transactionData.get(transaction_id);
     }
 

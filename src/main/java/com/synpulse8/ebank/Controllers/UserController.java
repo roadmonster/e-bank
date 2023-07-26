@@ -4,8 +4,8 @@ import com.synpulse8.ebank.DTO.SignupRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.User;
-import com.synpulse8.ebank.Services.AccountService;
-import com.synpulse8.ebank.Services.UserService;
+import com.synpulse8.ebank.Services.Account.AccountService;
+import com.synpulse8.ebank.Services.User.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

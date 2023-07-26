@@ -14,7 +14,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class BalanceUpdateDTO {
+public class BalanceUpdateRequest {
     private Long account_id;
     private BigDecimal amount;
     private UUID uuid;

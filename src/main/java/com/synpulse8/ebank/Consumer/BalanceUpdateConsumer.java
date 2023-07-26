@@ -1,7 +1,7 @@
 package com.synpulse8.ebank.Consumer;
 
-import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
-import com.synpulse8.ebank.Services.AccountService;
+import com.synpulse8.ebank.DTO.BalanceUpdateRequest;
+import com.synpulse8.ebank.Services.Account.AccountService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -16,7 +16,7 @@ public class BalanceUpdateConsumer {
     private final AccountService accountService;
     @KafkaListener(topics = "account_balance", groupId = "balance-group",
             containerFactory = "accBalanceKafkaListenerContainerFactory")
-    public void handleBalanceUpdateEvent(BalanceUpdateDTO dto) {
+    public void handleBalanceUpdateEvent(BalanceUpdateRequest dto) {
         accountService.updateBalance(dto);
     }
 

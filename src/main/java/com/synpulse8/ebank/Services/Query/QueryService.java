@@ -1,4 +1,4 @@
-package com.synpulse8.ebank.Services;
+package com.synpulse8.ebank.Services.Query;
 
 import com.synpulse8.ebank.DTO.QueryResponse;
 import com.synpulse8.ebank.Models.Transaction;

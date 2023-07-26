@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Consumer;
 
-import com.synpulse8.ebank.DTO.QueryRequestDTO;
+import com.synpulse8.ebank.DTO.QueryRequest;
 import com.synpulse8.ebank.DTO.QueryResponse;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Repository.TransactionRepository;
@@ -21,7 +21,7 @@ public class QueryReqConsumer {
     private final KafkaTemplate<String, QueryResponse> queryResponseKafkaTemplate;
     @KafkaListener(topics = "Query_Request", groupId = "query-group",
             containerFactory = "queryRequestKafkaListenerContainerFactory")
-    public void handleQuery(QueryRequestDTO dto) {
+    public void handleQuery(QueryRequest dto) {
         Date from = dto.getFrom(), to = dto.getTo();
         String requestId = dto.getRequestId();
         Long userId = dto.getUserId();

@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @Builder
-public class QueryRequestDTO {
+public class QueryRequest {
     Date from;
     Date to;
     Long userId;

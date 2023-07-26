@@ -1,7 +1,7 @@
-package com.synpulse8.ebank.Services;
+package com.synpulse8.ebank.Services.Transaction;
 
-import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
-import com.synpulse8.ebank.DTO.TransactionDTO;
+import com.synpulse8.ebank.DTO.BalanceUpdateRequest;
+import com.synpulse8.ebank.DTO.DepositWithdrawRequest;
 import com.synpulse8.ebank.Models.Transaction;
 
 import java.util.Date;
@@ -15,9 +15,9 @@ public interface TransactionService {
     List<Transaction> getTransactionBetween(Date fromDate, Date toDate);
     List<Transaction> getAllTransactionByUser(Long userId);
     List<Transaction> getAllTransactions();
-    void deposit(TransactionDTO transactionDto);
-    void updateTransactionStatus(UUID uuid, TransactionDTO dto);
-    void publishBalanceUpdate(BalanceUpdateDTO dto);
-    TransactionDTO getTransactionStatus(UUID transaction_id);
+    void deposit(DepositWithdrawRequest depositWithdrawRequest);
+    void updateTransactionStatus(UUID uuid, DepositWithdrawRequest dto);
+    void publishBalanceUpdate(BalanceUpdateRequest dto);
+    DepositWithdrawRequest getTransactionStatus(UUID transaction_id);
 
 }

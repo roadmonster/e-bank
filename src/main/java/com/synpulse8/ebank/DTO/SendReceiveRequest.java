@@ -17,7 +17,7 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class SendReceiveTransactionDto {
+public class SendReceiveRequest {
     @JsonSerialize(using = MoneyDirectionSerializer.class)
     private MoneyDirection direction;
     private Long from_account;

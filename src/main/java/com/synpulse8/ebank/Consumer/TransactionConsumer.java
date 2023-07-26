@@ -1,11 +1,11 @@
 package com.synpulse8.ebank.Consumer;
 
-import com.synpulse8.ebank.DTO.TransactionDTO;
+import com.synpulse8.ebank.DTO.DepositWithdrawRequest;
 import com.synpulse8.ebank.Exceptions.BankAccountNonExistException;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Repository.AccountRepository;
 import com.synpulse8.ebank.Repository.TransactionRepository;
-import com.synpulse8.ebank.Services.TransactionService;
+import com.synpulse8.ebank.Services.Transaction.TransactionService;
 import lombok.AllArgsConstructor;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.kafka.annotation.KafkaListener;
@@ -21,7 +21,7 @@ public class TransactionConsumer {
     private final AccountRepository accountRepository;
     @KafkaListener(topics = "transaction", groupId = "transaction-group",
             containerFactory = "transactionKafkaListenerContainerFactory")
-    public void handleTransactionEvent(TransactionDTO dto) {
+    public void handleTransactionEvent(DepositWithdrawRequest dto) {
         Transaction t = Transaction.builder()
                 .transaction_id(dto.getTransaction_id().toString())
                 .transaction_time(dto.getTransaction_time())

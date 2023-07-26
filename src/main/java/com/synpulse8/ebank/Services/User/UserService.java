@@ -1,4 +1,4 @@
-package com.synpulse8.ebank.Services;
+package com.synpulse8.ebank.Services.User;
 
 import com.synpulse8.ebank.DTO.SignupRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;

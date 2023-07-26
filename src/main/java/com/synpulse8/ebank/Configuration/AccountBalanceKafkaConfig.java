@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Configuration;
 
-import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
+import com.synpulse8.ebank.DTO.BalanceUpdateRequest;
 import com.synpulse8.ebank.Utilities.ConsumerConfigPropGenerator;
 import com.synpulse8.ebank.Utilities.ProducerConfigPropGenerator;
 import org.apache.kafka.clients.admin.NewTopic;
@@ -24,29 +24,29 @@ public class AccountBalanceKafkaConfig {
 
     // Create the KafkaTemplate bean
     @Bean
-    public KafkaTemplate<UUID, BalanceUpdateDTO> accBalanceKafkaTemplate() {
+    public KafkaTemplate<UUID, BalanceUpdateRequest> accBalanceKafkaTemplate() {
         return new KafkaTemplate<>(accBalanceProducerFactory());
     }
 
 
     // Create the ProducerFactory bean
     @Bean
-    public ProducerFactory<UUID, BalanceUpdateDTO> accBalanceProducerFactory() {
+    public ProducerFactory<UUID, BalanceUpdateRequest> accBalanceProducerFactory() {
         return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<UUID, BalanceUpdateDTO> accBalanceKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, BalanceUpdateDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
+    public ConcurrentKafkaListenerContainerFactory<UUID, BalanceUpdateRequest> accBalanceKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<UUID, BalanceUpdateRequest> factory = new ConcurrentKafkaListenerContainerFactory<>();
         factory.setConsumerFactory(accBalanceConsumerFactory());
         return factory;
     }
 
     // Create the ConsumerFactory bean
     @Bean
-    public ConsumerFactory<UUID, BalanceUpdateDTO> accBalanceConsumerFactory() {
+    public ConsumerFactory<UUID, BalanceUpdateRequest> accBalanceConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(ConsumerConfigPropGenerator.getConsumerConfigProps(),
                 new UUIDDeserializer(),
-                new JsonDeserializer<>(BalanceUpdateDTO.class, false));
+                new JsonDeserializer<>(BalanceUpdateRequest.class, false));
     }
 }
