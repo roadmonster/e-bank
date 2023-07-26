@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class BalanceUpdateConsumer {
 
+    // TO DO will need to refactor this
     private final AccountService accountService;
     @KafkaListener(topics = "account_balance", groupId = "balance-group",
             containerFactory = "accBalanceKafkaListenerContainerFactory")

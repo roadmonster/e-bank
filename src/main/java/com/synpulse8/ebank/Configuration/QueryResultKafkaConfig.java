@@ -1,10 +1,10 @@
 package com.synpulse8.ebank.Configuration;
 
-import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
+import com.synpulse8.ebank.DTO.QueryResponse;
 import com.synpulse8.ebank.Utilities.ConsumerConfigPropGenerator;
 import com.synpulse8.ebank.Utilities.ProducerConfigPropGenerator;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.common.serialization.UUIDDeserializer;
+import org.apache.kafka.common.serialization.StringDeserializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -12,41 +12,39 @@ import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
 import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
-import java.util.UUID;
 
 @Configuration
 @EnableKafka
-public class AccountBalanceKafkaConfig {
+public class QueryResultKafkaConfig {
     @Bean
-    public NewTopic accBalanceTopic() {
-        return TopicBuilder.name("account_balance").partitions(1).replicas(1).build();
+    public NewTopic queryResponseTopic() {
+        return TopicBuilder.name("Query_Result").partitions(1).replicas(1).build();
     }
 
     // Create the KafkaTemplate bean
     @Bean
-    public KafkaTemplate<UUID, BalanceUpdateDTO> accBalanceKafkaTemplate() {
-        return new KafkaTemplate<>(accBalanceProducerFactory());
+    public KafkaTemplate<String, QueryResponse> queryResponseKafkaTemplate() {
+        return new KafkaTemplate<>(queryResponseProducerFactory());
     }
-
 
     // Create the ProducerFactory bean
     @Bean
-    public ProducerFactory<UUID, BalanceUpdateDTO> accBalanceProducerFactory() {
+    public ProducerFactory<String, QueryResponse> queryResponseProducerFactory() {
         return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 
     @Bean
-    public ConcurrentKafkaListenerContainerFactory<UUID, BalanceUpdateDTO> accBalanceKafkaListenerContainerFactory() {
-        ConcurrentKafkaListenerContainerFactory<UUID, BalanceUpdateDTO> factory = new ConcurrentKafkaListenerContainerFactory<>();
-        factory.setConsumerFactory(accBalanceConsumerFactory());
+    public ConcurrentKafkaListenerContainerFactory<String, QueryResponse> queryResponseKafkaListenerContainerFactory() {
+        ConcurrentKafkaListenerContainerFactory<String,QueryResponse> factory = new ConcurrentKafkaListenerContainerFactory<>();
+        factory.setConsumerFactory(queryResponseConsumerFactory());
         return factory;
     }
 
     // Create the ConsumerFactory bean
     @Bean
-    public ConsumerFactory<UUID, BalanceUpdateDTO> accBalanceConsumerFactory() {
+    public ConsumerFactory<String, QueryResponse> queryResponseConsumerFactory() {
         return new DefaultKafkaConsumerFactory<>(ConsumerConfigPropGenerator.getConsumerConfigProps(),
-                new UUIDDeserializer(),
-                new JsonDeserializer<>(BalanceUpdateDTO.class, false));
+                new StringDeserializer(),
+                new JsonDeserializer<>(QueryResponse.class, false));
     }
 }

@@ -3,9 +3,7 @@ package com.synpulse8.ebank.Services;
 import com.synpulse8.ebank.DTO.BalanceUpdateDTO;
 import com.synpulse8.ebank.DTO.TransactionDTO;
 import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
-import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.Transaction;
-import com.synpulse8.ebank.Repository.AccountRepository;
 import com.synpulse8.ebank.Repository.TransactionRepository;
 import com.synpulse8.ebank.Utilities.UUIDGenerator;
 import lombok.AllArgsConstructor;
@@ -22,8 +20,6 @@ import java.util.concurrent.ConcurrentMap;
 public class TransactionServiceImpl implements TransactionService{
 
     private final TransactionRepository transactionRepository;
-    private final AccountRepository accountRepository;
-    private Map<Long, Account> accountCache = new HashMap<>();
     private final KafkaTemplate<UUID, TransactionDTO> transactionKafkaTemplate;
     private final KafkaTemplate<UUID, BalanceUpdateDTO> accBalanceKafkaTemplate;
     private final ConcurrentMap<UUID, TransactionDTO> transactionData = new ConcurrentHashMap<>();
@@ -58,6 +54,13 @@ public class TransactionServiceImpl implements TransactionService{
         return transactionRepository.findAll();
     }
 
+
+    /**
+     * This deposit method work both way for deposit and withdraw, the client
+     * will simply change the amount into negative.
+     * It will update the data cache for the status for this transaction
+     * then publish the message to transaction channel and the balance update channel
+     */
     @Override
     public void deposit(TransactionDTO transactionDto) {
 
@@ -78,15 +81,26 @@ public class TransactionServiceImpl implements TransactionService{
         publishBalanceUpdate(balanceUpdateDTO);
     }
 
+    /**
+     * The consumer shall invoke this method after execute the logic.
+     * This method will update the local cache for the transaction status
+     * @param uuid the uuid for this transaction
+     * @param dto the data holding the status of the transaction from the consumer
+     */
     @Override
     public void updateTransactionStatus(UUID uuid, TransactionDTO dto) {
         transactionData.put(uuid, dto);
     }
 
+    /**
+     * Publish the BalanceUpdate message into the channel
+     * @param dto object holding the balance update details
+     */
     @Override
     public void publishBalanceUpdate(BalanceUpdateDTO dto) {
         accBalanceKafkaTemplate.send("account_balance", dto);
     }
+
 
     public TransactionDTO getTransactionStatus(UUID transaction_id) {
         return this.transactionData.get(transaction_id);

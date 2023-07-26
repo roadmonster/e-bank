@@ -7,6 +7,7 @@ import com.synpulse8.ebank.Enums.MoneyDirection;
 import com.synpulse8.ebank.Exceptions.BankTransactionNotFoundException;
 import com.synpulse8.ebank.Models.Transaction;
 import com.synpulse8.ebank.Services.TransactionService;
+import com.synpulse8.ebank.Utilities.DateBuilder;
 import com.synpulse8.ebank.Utilities.Timestamper;
 import com.synpulse8.ebank.Utilities.UUIDGenerator;
 import lombok.AllArgsConstructor;
@@ -56,8 +57,8 @@ public class TransactionController {
                                                             @RequestParam int tYear,
                                                             @RequestParam int tMonth,
                                                             @RequestParam int tDay) throws JsonProcessingException {
-        Date fromDate = formDate(fYear, fMonth, fDay);
-        Date toDate = formDate(tYear, tMonth, tDay);
+        Date fromDate = DateBuilder.formDate(fYear, fMonth, fDay);
+        Date toDate = DateBuilder.formDate(tYear, tMonth, tDay);
         return ResponseEntity.ok(objectMapper.writeValueAsString(
                 transactionService.getTransactionBetween(fromDate,toDate)));
     }
@@ -116,10 +117,5 @@ public class TransactionController {
             transaction_id_to_return = receiveDto.getTransaction_id();
         }
         return ResponseEntity.accepted().body("transaction processing " + transaction_id_to_return);
-    }
-
-    private Date formDate(int y, int m, int d) {
-        LocalDate localDate = LocalDate.of(y, m, d);
-        return Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
     }
 }

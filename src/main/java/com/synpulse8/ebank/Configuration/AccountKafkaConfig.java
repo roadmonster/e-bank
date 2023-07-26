@@ -1,8 +1,9 @@
 package com.synpulse8.ebank.Configuration;
 
 import com.synpulse8.ebank.DTO.AccountCreationDTO;
+import com.synpulse8.ebank.Utilities.ConsumerConfigPropGenerator;
+import com.synpulse8.ebank.Utilities.ProducerConfigPropGenerator;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.kafka.annotation.EnableKafka;
@@ -11,10 +12,6 @@ import org.springframework.kafka.config.TopicBuilder;
 import org.springframework.kafka.core.*;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
-import org.springframework.kafka.support.serializer.JsonSerializer;
-import org.apache.kafka.common.serialization.StringSerializer;
-import java.util.HashMap;
-import java.util.Map;
 
 @Configuration
 @EnableKafka
@@ -27,21 +24,16 @@ public class AccountKafkaConfig {
     }
 
     // Create the KafkaTemplate bean
+
     @Bean
     public KafkaTemplate<String, AccountCreationDTO> accountKafkaTemplate() {
         return new KafkaTemplate<>(accountProducerFactory());
     }
 
-
     // Create the ProducerFactory bean
     @Bean
     public ProducerFactory<String, AccountCreationDTO> accountProducerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        // Add Kafka producer properties
-        configProps.put("bootstrap.servers", "localhost:9092");
-        configProps.put("key.serializer", StringSerializer.class);
-        configProps.put("value.serializer", JsonSerializer.class);
-        return new DefaultKafkaProducerFactory<>(configProps);
+        return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 
     @Bean
@@ -54,14 +46,10 @@ public class AccountKafkaConfig {
     // Create the ConsumerFactory bean
     @Bean
     public ConsumerFactory<String, AccountCreationDTO> accountConsumerFactory() {
-        Map<String, Object> configProps = new HashMap<>();
-        // Add Kafka consumer properties
-        configProps.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, "localhost:9092");
-        configProps.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-        configProps.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
-        configProps.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        return new DefaultKafkaConsumerFactory<>(configProps, new StringDeserializer(),
+
+        return new DefaultKafkaConsumerFactory<>(ConsumerConfigPropGenerator.getConsumerConfigProps(),
+                new StringDeserializer(),
                 new JsonDeserializer<>(AccountCreationDTO.class, false));
     }
 
