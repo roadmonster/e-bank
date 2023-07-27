@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Controllers;
 
-import com.synpulse8.ebank.DTO.SignupRequest;
+import com.synpulse8.ebank.DTO.RegisterRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;
 import com.synpulse8.ebank.Models.Account;
 import com.synpulse8.ebank.Models.User;
@@ -30,7 +30,7 @@ public class UserController {
     }
 
     @PostMapping
-    public User createUser(@RequestBody SignupRequest request) {
+    public User createUser(@RequestBody RegisterRequest request) {
         return userService.createUser(request);
     }
 

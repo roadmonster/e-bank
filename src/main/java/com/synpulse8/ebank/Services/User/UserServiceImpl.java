@@ -1,6 +1,6 @@
 package com.synpulse8.ebank.Services.User;
 
-import com.synpulse8.ebank.DTO.SignupRequest;
+import com.synpulse8.ebank.DTO.RegisterRequest;
 import com.synpulse8.ebank.DTO.UserUpdateRequest;
 import com.synpulse8.ebank.Exceptions.UserNotFoundException;
 import com.synpulse8.ebank.Models.User;
@@ -27,7 +27,7 @@ public class UserServiceImpl implements UserService{
         System.out.println("request username :" + request.getName());
         return userRepository.findById(userId)
                 .map(existingUser -> {
-                    existingUser.setName(request.getName());
+                    existingUser.setUsername(request.getName());
                     existingUser.setEmail(request.getEmail());
                     existingUser.setPwd(passwordEncoder.encode(request.getPwd()));
                     return userRepository.save(existingUser);
@@ -36,9 +36,9 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public User createUser(SignupRequest request) {
+    public User createUser(RegisterRequest request) {
         User user = User.builder()
-                .name(request.getUsername())
+                .username(request.getUsername())
                 .pwd(passwordEncoder.encode(request.getPwd()))
                 .email(request.getEmail())
                 .build();
