@@ -18,8 +18,8 @@ public class Transaction {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String transaction_id;
-    private Timestamp transaction_time;
+    private String transactionId;
+    private Timestamp transactionTime;
     private Long userid;
 
     @ManyToOne
@@ -27,19 +27,5 @@ public class Transaction {
     private Account account;
     private Currency currency;
     private BigDecimal amount;
-//    private TransactionType transaction_type;
-
-    @Getter(AccessLevel.NONE)
-    @Setter(AccessLevel.NONE)
-    @Transient
-    private Date transactionDate;
-
-    public Date getTransactionDate() {
-        return transaction_time != null ? new Date(transaction_time.getTime()) : null;
-    }
-
-    public void setTransactionDate(Date transactionDate) {
-        this.transactionDate = transactionDate;
-    }
 }
 

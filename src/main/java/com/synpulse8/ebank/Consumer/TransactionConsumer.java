@@ -23,8 +23,8 @@ public class TransactionConsumer {
             containerFactory = "transactionKafkaListenerContainerFactory")
     public void handleTransactionEvent(DepositWithdrawRequest dto) {
         Transaction t = Transaction.builder()
-                .transaction_id(dto.getTransaction_id().toString())
-                .transaction_time(dto.getTransaction_time())
+                .transactionId(dto.getTransaction_id().toString())
+                .transactionTime(dto.getTransaction_time())
                 .amount(dto.getAmount())
                 .account(accountRepository.findById(dto.getAccount_id()).orElseThrow(
                         () -> new BankAccountNonExistException("no matching result in bank account database")

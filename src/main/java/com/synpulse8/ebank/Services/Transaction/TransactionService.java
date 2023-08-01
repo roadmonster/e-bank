@@ -10,11 +10,11 @@ import java.util.UUID;
 
 public interface TransactionService {
 //    boolean verifyTransaction(SendReceiveTransactionRequest request);
-    Transaction getTransactionById(Long uuid);
-    List<Transaction> getTransactionByDate(int year, int month, int day);
-    List<Transaction> getTransactionBetween(Date fromDate, Date toDate);
-    List<Transaction> getAllTransactionByUser(Long userId);
-    List<Transaction> getAllTransactions();
+//    Transaction getTransactionById(Long uuid);
+//    List<Transaction> getTransactionByDate(int year, int month, int day);
+//    List<Transaction> getTransactionBetween(Date fromDate, Date toDate);
+//    List<Transaction> getAllTransactionByUser(Long userId);
+//    List<Transaction> getAllTransactions();
     void deposit(DepositWithdrawRequest depositWithdrawRequest);
     void updateTransactionStatus(UUID uuid, DepositWithdrawRequest dto);
     void publishBalanceUpdate(BalanceUpdateRequest dto);

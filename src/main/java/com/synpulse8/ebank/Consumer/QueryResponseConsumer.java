@@ -29,6 +29,7 @@ public class QueryResponseConsumer {
     @KafkaListener(topics = "Query_Result", groupId = "query-response-consumer",
             containerFactory = "queryResponseKafkaListenerContainerFactory")
     public void handleKafkaResponse(QueryResponse response) {
+
         // Process the response and add it to the CompletableFuture or BlockingQueue
         responseProcessor.processResponse(response);
     }

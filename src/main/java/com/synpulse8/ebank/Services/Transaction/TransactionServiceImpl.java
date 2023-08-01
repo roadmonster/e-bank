@@ -23,36 +23,36 @@ public class TransactionServiceImpl implements TransactionService{
     private final KafkaTemplate<UUID, DepositWithdrawRequest> transactionKafkaTemplate;
     private final KafkaTemplate<UUID, BalanceUpdateRequest> accBalanceKafkaTemplate;
     private final ConcurrentMap<UUID, DepositWithdrawRequest> transactionData = new ConcurrentHashMap<>();
-
-    @Override
-    public Transaction getTransactionById(Long id) {
-        return transactionRepository.findById(id).orElseThrow(
-                () -> new BankTransactionNotFoundException("not matching recode for given transaction id")
-        );
-    }
-
-    @Override
-    public List<Transaction> getAllTransactionByUser(Long userId) {
-        return transactionRepository.findAllByUserid(userId);
-    }
-
-    @Override
-    public List<Transaction> getTransactionByDate(int year, int month, int day) {
-        // create a locate date and convert to date object
-        LocalDate localDate = LocalDate.of(year, month, day);
-
-        // using the server's timezone could be a bit risky since the server
-        // could be in different timezone, for the purpose of self contained app
-        // we use server's timezone. In production will need front end to form this date
-        // object and send it back.
-        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-        return transactionRepository.findByTransactionTimeBetween(date, date);
-    }
-
-    @Override
-    public List<Transaction> getAllTransactions() {
-        return transactionRepository.findAll();
-    }
+//
+//    @Override
+//    public Transaction getTransactionById(Long id) {
+//        return transactionRepository.findById(id).orElseThrow(
+//                () -> new BankTransactionNotFoundException("not matching recode for given transaction id")
+//        );
+//    }
+//
+//    @Override
+//    public List<Transaction> getAllTransactionByUser(Long userId) {
+//        return transactionRepository.findAllByUserId(userId);
+//    }
+//
+//    @Override
+//    public List<Transaction> getTransactionByDate(int year, int month, int day) {
+//        // create a locate date and convert to date object
+//        LocalDate localDate = LocalDate.of(year, month, day);
+//
+//        // using the server's timezone could be a bit risky since the server
+//        // could be in different timezone, for the purpose of self contained app
+//        // we use server's timezone. In production will need front end to form this date
+//        // object and send it back.
+//        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+//        return transactionRepository.findByTransactionTimeBetween(date, date);
+//    }
+//
+//    @Override
+//    public List<Transaction> getAllTransactions() {
+//        return transactionRepository.findAll();
+//    }
 
 
     /**
@@ -106,10 +106,10 @@ public class TransactionServiceImpl implements TransactionService{
         return this.transactionData.get(transaction_id);
     }
 
-    @Override
-    public List<Transaction> getTransactionBetween(Date fromDate, Date toDate) {
-        return transactionRepository.findByTransactionTimeBetween(fromDate, toDate);
-    }
+//    @Override
+//    public List<Transaction> getTransactionBetween(Date fromDate, Date toDate) {
+//        return transactionRepository.findByTransactionTimeBetween(fromDate, toDate);
+//    }
 
 
 }

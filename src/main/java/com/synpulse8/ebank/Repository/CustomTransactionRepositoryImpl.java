@@ -25,7 +25,7 @@ public class CustomTransactionRepositoryImpl implements CustomTransactionReposit
         Timestamp endTimestamp = getTimestampWithEndTime(endDate);
 
         return entityManager.createQuery(
-                "SELECT t FROM Transaction t WHERE t.transaction_time >= :startDate AND t.transaction_time <= :endDate", Transaction.class)
+                "SELECT t FROM Transaction t WHERE t.transactionTime >= :startDate AND t.transactionTime <= :endDate", Transaction.class)
                 .setParameter("startDate", startTimestamp)
                 .setParameter("endDate", endTimestamp)
                 .getResultList();
@@ -37,7 +37,7 @@ public class CustomTransactionRepositoryImpl implements CustomTransactionReposit
         Timestamp endTimestamp = getTimestampWithEndTime(endDate);
 
         return entityManager.createQuery(
-                "SELECT t FROM Transaction t WHERE t.transaction_time BETWEEN :startDate AND :endDate", Transaction.class)
+                "SELECT t FROM Transaction t WHERE t.transactionTime BETWEEN :startDate AND :endDate", Transaction.class)
                 .setParameter("startDate", startTimestamp)
                 .setParameter("endDate", endTimestamp)
                 .getResultList();
