@@ -23,12 +23,12 @@ public class TransactionKafkaConfig {
     }
 
     @Bean
-    public KafkaTemplate<UUID, DepositWithdrawRequest> transactionKafkaTemplate() {
+    public KafkaTemplate<String, DepositWithdrawRequest> transactionKafkaTemplate() {
         return new KafkaTemplate<>(transactionProducerFactory());
     }
 
     @Bean
-    public ProducerFactory<UUID, DepositWithdrawRequest> transactionProducerFactory() {
+    public ProducerFactory<String, DepositWithdrawRequest> transactionProducerFactory() {
         return new DefaultKafkaProducerFactory<>(ProducerConfigPropGenerator.generateConfig());
     }
 

@@ -18,43 +18,9 @@ import java.util.concurrent.ConcurrentMap;
 @Service
 @AllArgsConstructor
 public class TransactionServiceImpl implements TransactionService{
-
-    private final TransactionRepository transactionRepository;
-    private final KafkaTemplate<UUID, DepositWithdrawRequest> transactionKafkaTemplate;
-    private final KafkaTemplate<UUID, BalanceUpdateRequest> accBalanceKafkaTemplate;
-    private final ConcurrentMap<UUID, DepositWithdrawRequest> transactionData = new ConcurrentHashMap<>();
-//
-//    @Override
-//    public Transaction getTransactionById(Long id) {
-//        return transactionRepository.findById(id).orElseThrow(
-//                () -> new BankTransactionNotFoundException("not matching recode for given transaction id")
-//        );
-//    }
-//
-//    @Override
-//    public List<Transaction> getAllTransactionByUser(Long userId) {
-//        return transactionRepository.findAllByUserId(userId);
-//    }
-//
-//    @Override
-//    public List<Transaction> getTransactionByDate(int year, int month, int day) {
-//        // create a locate date and convert to date object
-//        LocalDate localDate = LocalDate.of(year, month, day);
-//
-//        // using the server's timezone could be a bit risky since the server
-//        // could be in different timezone, for the purpose of self contained app
-//        // we use server's timezone. In production will need front end to form this date
-//        // object and send it back.
-//        Date date = Date.from(localDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
-//        return transactionRepository.findByTransactionTimeBetween(date, date);
-//    }
-//
-//    @Override
-//    public List<Transaction> getAllTransactions() {
-//        return transactionRepository.findAll();
-//    }
-
-
+    private final KafkaTemplate<String, DepositWithdrawRequest> transactionKafkaTemplate;
+    private final KafkaTemplate<String, BalanceUpdateRequest> accBalanceKafkaTemplate;
+    private final ConcurrentMap<String, DepositWithdrawRequest> transactionData = new ConcurrentHashMap<>();
     /**
      * This deposit method work both way for deposit and withdraw, the client
      * will simply change the amount into negative.
@@ -70,8 +36,11 @@ public class TransactionServiceImpl implements TransactionService{
         // Store the transaction details in the transactionData map
         transactionData.put(depositWithdrawRequest.getTransaction_id(), depositWithdrawRequest);
 
+        System.out.println("Debug content of request " + depositWithdrawRequest.toString());
         // Publish the transaction event to a Kafka topic
         transactionKafkaTemplate.send("transaction", depositWithdrawRequest.getTransaction_id(), depositWithdrawRequest);
+
+        System.out.println("debug I have sent the transaction ");
 
         BalanceUpdateRequest balanceUpdateRequest = BalanceUpdateRequest.builder()
                 .account_id(depositWithdrawRequest.getAccount_id())
@@ -88,7 +57,7 @@ public class TransactionServiceImpl implements TransactionService{
      * @param dto the data holding the status of the transaction from the consumer
      */
     @Override
-    public void updateTransactionStatus(UUID uuid, DepositWithdrawRequest dto) {
+    public void updateTransactionStatus(String uuid, DepositWithdrawRequest dto) {
         transactionData.put(uuid, dto);
     }
 
@@ -101,15 +70,7 @@ public class TransactionServiceImpl implements TransactionService{
         accBalanceKafkaTemplate.send("account_balance", dto);
     }
 
-
-    public DepositWithdrawRequest getTransactionStatus(UUID transaction_id) {
+    public DepositWithdrawRequest getTransactionStatus(String transaction_id) {
         return this.transactionData.get(transaction_id);
     }
-
-//    @Override
-//    public List<Transaction> getTransactionBetween(Date fromDate, Date toDate) {
-//        return transactionRepository.findByTransactionTimeBetween(fromDate, toDate);
-//    }
-
-
 }

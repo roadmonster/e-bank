@@ -17,5 +17,5 @@ import java.util.UUID;
 public class BalanceUpdateRequest {
     private Long account_id;
     private BigDecimal amount;
-    private UUID uuid;
+    private String uuid;
 }

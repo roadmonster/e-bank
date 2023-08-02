@@ -102,7 +102,7 @@ public class TransactionController {
                 .userId(request.getSender_id())
                 .status("Pending")
                 .build();
-        UUID transaction_id_to_return = sendDto.getTransaction_id();
+        String transaction_id_to_return = sendDto.getTransaction_id();
         transactionService.deposit(sendDto);
 
         DepositWithdrawRequest receiveDto = (DepositWithdrawRequest) sendDto.clone();

@@ -23,7 +23,7 @@ public class TransactionConsumer {
             containerFactory = "transactionKafkaListenerContainerFactory")
     public void handleTransactionEvent(DepositWithdrawRequest dto) {
         Transaction t = Transaction.builder()
-                .transactionId(dto.getTransaction_id().toString())
+                .transactionId(dto.getTransaction_id())
                 .transactionTime(dto.getTransaction_time())
                 .amount(dto.getAmount())
                 .account(accountRepository.findById(dto.getAccount_id()).orElseThrow(

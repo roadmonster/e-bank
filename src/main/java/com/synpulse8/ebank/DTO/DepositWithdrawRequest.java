@@ -19,7 +19,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class DepositWithdrawRequest implements Cloneable{
-    private UUID transaction_id;
+    private String transaction_id;
     private Timestamp transaction_time;
     private Long userId;
 
